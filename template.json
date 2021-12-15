@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "extensions_CustomScriptForLinux_fileUris": {
+            "type": "Array"
+        },
+        "extensions_CustomScriptForLinux_storageAccountName": {
+            "type": "SecureString"
+        },
+        "extensions_CustomScriptForLinux_storageAccountKey": {
+            "type": "SecureString"
+        },
+        "extensions_CustomScriptForLinux_commandToExecute": {
+            "type": "SecureString"
+        },
+        "virtualMachines_qmigvm75_name": {
+            "defaultValue": "qmigvm75",
+            "type": "String"
+        },
+        "galleries_ora2pg_gallery_externalid": {
+            "defaultValue": "/subscriptions/ae4a19bf-d4b0-4d5a-84d3-e574954f8960/resourceGroups/ora2pg_snapshots/providers/Microsoft.Compute/galleries/ora2pg_gallery",
+            "type": "String"
+        },
+        "disks_qmigvm75_OsDisk_1_64489f67d18a4c05984b8a107ce072ef_externalid": {
+            "defaultValue": "/subscriptions/ae4a19bf-d4b0-4d5a-84d3-e574954f8960/resourceGroups/qmigrg75/providers/Microsoft.Compute/disks/qmigvm75_OsDisk_1_64489f67d18a4c05984b8a107ce072ef",
+            "type": "String"
+        },
+        "networkInterfaces_nic_qmigvm75_75_externalid": {
+            "defaultValue": "/subscriptions/ae4a19bf-d4b0-4d5a-84d3-e574954f8960/resourceGroups/qmigrg75/providers/Microsoft.Network/networkInterfaces/nic_qmigvm75_75",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('virtualMachines_qmigvm75_name')]",
+            "location": "centralindia",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2as_v4"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "id": "[concat(parameters('galleries_ora2pg_gallery_externalid'), '/images/ora2pg_image_gallery/versions/0.70.0')]"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_qmigvm75_name'), '_OsDisk_1_64489f67d18a4c05984b8a107ce072ef')]",
+                        "createOption": "FromImage",
+                        "caching": "None",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[parameters('disks_qmigvm75_OsDisk_1_64489f67d18a4c05984b8a107ce072ef_externalid')]"
+                        },
+                        "diskSizeGB": 32
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_qmigvm75_name')]",
+                    "adminUsername": "qmig",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_nic_qmigvm75_75_externalid')]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2021-07-01",
+            "name": "[concat(parameters('virtualMachines_qmigvm75_name'), '/CustomScriptForLinux')]",
+            "location": "centralindia",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_qmigvm75_name'))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.Extensions",
+                "type": "CustomScript",
+                "typeHandlerVersion": "2.1",
+                "settings": {
+                    "fileUris": "[parameters('extensions_CustomScriptForLinux_fileUris')]"
+                },
+                "protectedSettings": {
+                    "storageAccountName": "[parameters('extensions_CustomScriptForLinux_storageAccountName')]",
+                    "storageAccountKey": "[parameters('extensions_CustomScriptForLinux_storageAccountKey')]",
+                    "commandToExecute": "[parameters('extensions_CustomScriptForLinux_commandToExecute')]"
+                }
+            }
+        }
+    ]
+}
