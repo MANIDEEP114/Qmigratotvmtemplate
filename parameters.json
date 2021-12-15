@@ -3,28 +3,28 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "extensions_CustomScriptForLinux_fileUris": {
-            "value": null
+            "value": "RAR"
         },
         "extensions_CustomScriptForLinux_storageAccountName": {
-            "value": null
+            "value": "manideep"
         },
         "extensions_CustomScriptForLinux_storageAccountKey": {
-            "value": null
+            "value": "key"
         },
         "extensions_CustomScriptForLinux_commandToExecute": {
-            "value": null
+            "value": "sas"
         },
         "virtualMachines_qmigvm75_name": {
-            "value": null
+            "value": "image"
         },
         "galleries_ora2pg_gallery_externalid": {
-            "value": null
+            "value": "gallery123"
         },
         "disks_qmigvm75_OsDisk_1_64489f67d18a4c05984b8a107ce072ef_externalid": {
-            "value": null
+            "value": "234687
         },
         "networkInterfaces_nic_qmigvm75_75_externalid": {
-            "value": null
+            "value": "99887766"
         }
     }
 }
